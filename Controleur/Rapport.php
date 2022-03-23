@@ -1,6 +1,5 @@
 <?php
 
-//Syn de CreeRapport
 include_once "./Modele/authentification.inc.php";
 include_once "./Modele/daomedecins.php";
 include_once "./Modele/daomedicament.php";
@@ -15,6 +14,7 @@ if($type=="Rapport"){
     include "./Vue/boot.html.php";
     include "./Vue/vueRapport.php";
 }
+
 elseif($type=="RemplirRapport"){ //Synt de CreeRapport
     $dateErr = $motifErr = $bilanErr = $idMedecinErr = "";
     $name = $email = $gender = $comment = $website = "";
@@ -32,23 +32,23 @@ elseif($type=="RemplirRapport"){ //Synt de CreeRapport
             $idMedecin = $_POST["idMedecin"];
         }
     }
-    if(isset($_POST["date"])){
-        if ($_POST["date"]=="") {
-            $dateErr = "Mettez la date";
-        }
-    }
+    // if(isset($_POST["date"])){
+    //     if ($_POST["date"]=="") {
+    //         $dateErr = "Mettez la date";
+    //     }
+    // }
 
-    if (empty($_POST["motif"])) {
-        $motifErr = "Mettez le motif";
-    }
+    // if (empty($_POST["motif"])) {
+    //     $motifErr = "Mettez le motif";
+    // }
 
-    if (empty($_POST["bilan"])) {
-        $bilanErr = "Mettez le bilan";
-    }
+    // if (empty($_POST["bilan"])) {
+    //     $bilanErr = "Mettez le bilan";
+    // }
 
-    if (empty($_POST["idMedecin"])) {
-        $idMedecinErr = "Mettez le medecin";
-    }
+    // if (empty($_POST["idMedecin"])) {
+    //     $idMedecinErr = "Mettez le medecin";
+    // }
 
     if (isset($date) && isset($motif) && isset($bilan) && isset($idVisiteur) && isset($idMedecin)){
         daorapport::addRapport($date, $motif, $bilan, $idVisiteur, $idMedecin);
@@ -60,6 +60,7 @@ elseif($type=="RemplirRapport"){ //Synt de CreeRapport
         include './Vue/vueCreeRapport.php';
     }
 }
+
 elseif ($type=="CreeRapportMed") { // Syn de NbMed
     $medErr="";
     $listrentrermedicament=array();
@@ -94,16 +95,6 @@ elseif ($type=="CreeRapportMed") { // Syn de NbMed
         include './Vue/vueCreeRapportMed.php';
     }
 }
-elseif ($type="VoirRapport") {
-    if (isset($_GET["idMedecin"])) {
-        $idMedecin = $_GET["idMedecin"];
-    }
-    
-    $RapportsMedecin=daorapport::getRapportMedecin($idMedecin);
-    
-    include "./Vue/boot.html.php";
-    include "./Vue/vueRapportMedecin.php";
-}
 
 elseif ($type="RechercheRapport") {
     $lesRapports=array();
@@ -118,7 +109,22 @@ elseif ($type="RechercheRapport") {
     include "./Vue/vueVueRapport.php";
 }
 
+elseif ($type="VoirRapport") {
+    if (isset($_GET["idMedecin"])) {
+        $idMedecin = $_GET["idMedecin"];
+    }
+    
+    $RapportsMedecin=daorapport::getRapportMedecin($idMedecin);
+    
+    include "./Vue/boot.html.php";
+    include "./Vue/vueRapportMedecin.php";
+}
 
+elseif ($type="VueRapport") {
+    $rechercheRapport=array();
+    $lesRapports=daorapport::getRapportbyId(daoauthentification::getIdLoggedOn());
+    include "./Vue/vueVueRapport.php";
+}
 
 elseif ($type="ModifierRapport") {
     $Err="";
@@ -127,24 +133,26 @@ elseif ($type="ModifierRapport") {
     include "./Vue/boot.html.php";
     include "./Vue/vueModifierRapport.php";
 }
+
 elseif ($type="ajoutmedoc") {
     if (isset($_POST["medicament"]) && isset($_POST["quantite"])){
         $medicament=$_POST["medicament"];
         $quantite=$_POST["quantite"];
     }
-    else
-    {
+    else{
         $medicament="";
         $quantite="";
     }
     
     include "./Vue/vueRapportMed.php";
 }
+
 elseif ($type="enregrapport") {
     $leDernierRapport=daorapport::getRapportEnreg();
 
     include "./Vue/vueEnregistrerRapport.php";
 }
+
 elseif ($type="EnregModRapport") {
     if($_POST["motif"] != "" && $_POST["bilan"] != ""){
         $ModRapport=daorapport::UpdateRapport(daoauthentification::getIdLoggedOn(),$_POST["id"], $_POST["motif"], $_POST["bilan"]);
@@ -156,11 +164,6 @@ elseif ($type="EnregModRapport") {
         include "./Vue/boot.html.php";
         include "./Vue/vueModifierRapport.php";
     }
-}
-elseif ($type="VueRapport") {
-    $rechercheRapport=array();
-    $lesRapports=daorapport::getRapportbyId(daoauthentification::getIdLoggedOn());
-    include "./Vue/vueVueRapport.php";
 }
 
 elseif ($type="NullRapport") {
